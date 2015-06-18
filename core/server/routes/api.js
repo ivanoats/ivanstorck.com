@@ -3,7 +3,7 @@ var express     = require('express'),
     api         = require('../api'),
     apiRoutes;
 
-apiRoutes = function (middleware) {
+apiRoutes = function apiRoutes(middleware) {
     var router = express.Router();
     // alias delete with del
     router.del = router.delete;
@@ -38,6 +38,11 @@ apiRoutes = function (middleware) {
 
     // ## Tags
     router.get('/tags', api.http(api.tags.browse));
+    router.get('/tags/:id', api.http(api.tags.read));
+    router.get('/tags/slug/:slug', api.http(api.tags.read));
+    router.post('/tags', api.http(api.tags.add));
+    router.put('/tags/:id', api.http(api.tags.edit));
+    router.del('/tags/:id', api.http(api.tags.destroy));
 
     // ## Roles
     router.get('/roles/', api.http(api.roles.browse));
@@ -61,13 +66,11 @@ apiRoutes = function (middleware) {
 
     // ## Mail
     router.post('/mail', api.http(api.mail.send));
-    router.post('/mail/test', function (req, res) {
-        api.http(api.mail.sendTest)(req, res);
-    });
+    router.post('/mail/test', api.http(api.mail.sendTest));
 
     // ## Authentication
     router.post('/authentication/passwordreset',
-        middleware.spamForgottenPrevention,
+        middleware.spamPrevention.forgotten,
         api.http(api.authentication.generateResetToken)
     );
     router.put('/authentication/passwordreset', api.http(api.authentication.resetPassword));
@@ -76,15 +79,20 @@ apiRoutes = function (middleware) {
     router.post('/authentication/setup', api.http(api.authentication.setup));
     router.get('/authentication/setup', api.http(api.authentication.isSetup));
     router.post('/authentication/token',
-        middleware.spamSigninPrevention,
-        middleware.addClientSecret,
-        middleware.authenticateClient,
-        middleware.generateAccessToken
+        middleware.spamPrevention.signin,
+        middleware.api.addClientSecret,
+        middleware.api.authenticateClient,
+        middleware.api.generateAccessToken
     );
     router.post('/authentication/revoke', api.http(api.authentication.revoke));
 
     // ## Uploads
     router.post('/uploads', middleware.busboy, api.http(api.uploads.add));
+
+    // API Router middleware
+    router.use(middleware.api.methodNotAllowed);
+
+    router.use(middleware.api.errorHandler);
 
     return router;
 };
