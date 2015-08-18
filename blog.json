@@ -1,0 +1,12 @@
+{
+  "apps" : [{
+      "name"        : "blog",
+      "script"      : "index.js",
+      "watch"       : false,
+      "merge_logs"  : true,
+      "cwd"         : "/home/ubuntu/ivanstorck",
+      "env": {
+              "NODE_ENV": "production",
+          }
+    }]
+}
