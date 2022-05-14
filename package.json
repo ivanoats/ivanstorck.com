@@ -29,7 +29,7 @@
     "bcryptjs": "2.4.3",
     "bluebird": "2.9.27",
     "body-parser": "1.18.2",
-    "bookshelf": "0.10.0",
+    "bookshelf": "0.14.0",
     "busboy": "0.2.9",
     "chalk": "1.0.0",
     "cheerio": "0.20.0",
